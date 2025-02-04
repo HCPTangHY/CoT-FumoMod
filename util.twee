@@ -1,0 +1,13 @@
+:: PaperdollUtil-fumo [widget nobr]
+
+<<widget "fumoCanvas">>
+    <canvas id="fumoCanvas" style="position: absolute; left: -70px; top: 80px; z-index: 2;"></canvas>
+    <<script>>
+        $(document).one(":passageend", () => {
+            (async function() {
+                const canvas = document.getElementById("fumoCanvas");
+                let paperdoll = await setup.Paperdoll.fumorender(canvas)
+            })();
+        });
+    <</script>>
+<</widget>>

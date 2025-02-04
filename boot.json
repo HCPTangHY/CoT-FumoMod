@@ -1,0 +1,43 @@
+{
+    "name": "FumoMod",
+    "version": "0.1.0",
+    "styleFileList": [],
+    "scriptFileList": [],
+    "scriptFileList_earlyload": [],
+    "scriptFileList_inject_early": [],
+    "scriptFileList_preload": [],
+    "tweeFileList": [],
+    "imgFileList": [],
+    "additionFile": [],
+    "additionDir": [
+        "res/fumoimg/"
+    ],
+    "addonPlugin": [{
+        "modName": "TweeReplacer",
+        "addonName": "TweeReplacerAddon",
+        "modVersion": "^1.6.0",
+        "params": [{
+            "passage": "StoryCaption",
+            "findString": "<div class=\"todimg",
+            "replace": "<<fumoCanvas>><div class=\"todimg"
+        }]
+    }, {
+        "modName": "ImageLoaderHook",
+        "addonName": "ImageLoaderAddon",
+        "modVersion": "^2.16.0",
+        "params": []
+    }],
+    "dependenceInfo": [{
+        "modName": "TweeReplacer",
+        "version": "^1.6.0"
+    }, {
+        "modName": "ModLoader",
+        "version": "^2.26.9"
+    }, {
+        "modName": "ImageLoaderHook",
+        "version": "^2.16.0"
+    },{
+        "modName":"PaperdollFramework",
+        "version": "^0.2.3"
+    }]
+}
