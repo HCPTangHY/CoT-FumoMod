@@ -21,7 +21,7 @@ setup.Paperdoll.fumo_clotheSubLayers = async function(paperdoll, imgPath, color,
         await paperdoll.loadClotheMask(`${imgPath}clotheMask.png`,'clothe');
     }
     backClothes = await setup.Paperdoll.ifColorPush(`${imgPath}back`, backClothes, color);
-    return [backClothes, backClothes];
+    return [bodyClothes, backClothes];
 }
 
 setup.Paperdoll.fumo_clotheDiffsLayer = async function(paperdoll,clothe, imgPath, mainColor, bodyClothes, backClothes) {
@@ -53,7 +53,6 @@ setup.Paperdoll.fumo_clotheLayers = async function(paperdoll, clothes, bodyCloth
         // sub
         [bodyClothes, backClothes] = await setup.Paperdoll.fumo_clotheDiffsLayer(paperdoll, clothes[i], imgPath, mainColor, bodyClothes, backClothes);
     }
-    console.log(bodyClothes);
     return [paperdoll, bodyClothes, backClothes];
 }
 setup.Paperdoll.fumorender = async function(canvas) {
