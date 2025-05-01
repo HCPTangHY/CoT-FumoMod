@@ -88,85 +88,26 @@ setup.Paperdoll.fumorender = async function(canvas) {
         return;
     }
 
-    let PCLayers = {
-        // 衣服后背
-        "backClothes": {
-            layer: -20,
-            load: async function() {
-                for (let i = 0; i < backClothes.length; i++) {
-                    if (backClothes[i].color) await p.loadLayer(backClothes[i].path, backClothes[i].color, 'clothes');
-                    else await p.loadLayer(backClothes[i].path);
-                }
-            }
-        },
-        // 后发
-        "backhair": {
-            layer: -10,
-            load: async function() {
-                await p.loadLayer(`${baseURL}hair/back/${V.pc['hair style'].replace(/ /g, '_')}.png`, setup.hair_color_table[V.pc['hair color']], 'hair');
-            }
-        },
-        // 身体
-        "body": {
-            layer: 0,
-            load: async function() {
-                await p.loadLayer(`${baseURL}body/bodynoarms.png`, setup.skin_color_table[V.pc['skin color']], 'skin');
-                await p.loadLayer(`${baseURL}body/arms.png`, setup.skin_color_table[V.pc['skin color']], 'skin');
-            }
-        },
-        // 头
-        "head": {
-            layer: 10,
-            load: async function() {
-                await p.loadLayer(`${baseURL}body/head.png`, setup.skin_color_table[V.pc['skin color']], 'skin');
-                await p.loadLayer(`${baseURL}face/eyes.png`);
-                await p.loadLayer(`${baseURL}face/iris.png`, setup.eye_color_table[V.pc['eye color']]);
-                await p.loadLayer(`${baseURL}face/facial/${getCurrentExpression(V.pcneeds)}.png`);
-            }
-        },
-        // 衣服层
-        "bodyClothes": {
-            layer: 60,
-            load: async function() {
-                for (let i = 0; i < bodyClothes.length; i++) {
-                    if (bodyClothes[i].color) await p.loadLayer(bodyClothes[i].path, bodyClothes[i].color, 'clothes');
-                    else await p.loadLayer(bodyClothes[i].path);
-                }
-            }
-        },
-        // 前发
-        "fronthair": {
-            layer: 90,
-            load: async function() {
-                let frontHair = V.pc['hair style'].replace(/ /g, '_') + '.png';
-                if (await setup.Paperdoll.checkImgExists(`${baseURL}hair/front/${frontHair}`)) {
-                    await p.loadLayer(`${baseURL}hair/front/${frontHair}`, setup.hair_color_table[V.pc['hair color']], 'hair');
-                } else {
-                    await p.loadLayer(`${baseURL}hair/default.png`, setup.hair_color_table[V.pc['hair color']], 'hair');
-                }
-            }
-        }
-
-    }
-    let p = new PaperDollSystem(canvas);
+    let FMp = new PaperDollSystem(canvas);
     const baseURL = `res/fumoimg/`;
     // 加载人模
-    await p.loadBaseModel(`${baseURL}body/bodynoarms.png`);
+    await FMp.loadBaseModel(`${baseURL}body/bodynoarms.png`);
 
     V.pc.get_clothingItems_classes();
     let clothes = V.pc.clothes;
     let bodyClothes = [];
     let backClothes = [];
-    [p, bodyClothes, backClothes] = await setup.Paperdoll.fumo_clotheLayers(p, clothes, bodyClothes, backClothes);
+    [FMp, bodyClothes, backClothes] = await setup.Paperdoll.fumo_clotheLayers(FMp, clothes, bodyClothes, backClothes);
 
     // 其他图层插入点
     // Object.assign(PCLayers, {xxxx});
 
     // 后景替换插入点
-
+    let PCLayers = setup.Paperdoll.models.fumomain.layer;
+    let content = {FMp, baseURL, backClothes, bodyClothes,getCurrentExpression};
     let layers = Object.keys(PCLayers).sort((a, b) => PCLayers[a].layer - PCLayers[b].layer);
     for (let layer of layers) {
-        await PCLayers[layer].load();
+        await PCLayers[layer].load(content);
     }
 
     // 前景替换插入点
@@ -174,21 +115,21 @@ setup.Paperdoll.fumorender = async function(canvas) {
     function calculateScale(x) {
         return 0.8
     }
-    window.p = p;
+    window.p = FMp;
 
     setTimeout(() => {
         console.log('All layers loaded, caching result');
         // p.ctx.imageSmoothingEnabled = false;
-        p.draw();
+        FMp.draw();
 
         canvas.style.transform = `scale(0.8)`;
-        if (p.canvas.height <= 256) {
+        if (FMp.canvas.height <= 256) {
             canvas.style.imageRendering = "pixelated";
             canvas.style.imageRendering = "crisp-edges";
             canvas.style.msInterpolationMode = "nearest-neighbor";
         }
-        setup.Paperdoll.cache.set(fumocacheKey, p.canvas);
+        setup.Paperdoll.cache.set(fumocacheKey, FMp.canvas);
     }, 50);
 
-    return p;
+    return FMp;
 }
